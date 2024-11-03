@@ -15,7 +15,6 @@ func Run(tasks []Task, n, m int) error {
 	tasksCh := make(chan Task)
 	done := make(chan struct{})
 
-	var tasksCounter int64
 	var errCounter int64
 	var err error
 	var wg sync.WaitGroup
@@ -24,7 +23,7 @@ func Run(tasks []Task, n, m int) error {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			worker(tasksCh, done, &tasksCounter, &errCounter)
+			worker(tasksCh, done, &errCounter)
 		}()
 	}
 
@@ -33,10 +32,6 @@ func Run(tasks []Task, n, m int) error {
 
 		if atomic.LoadInt64(&errCounter) >= int64(m) {
 			err = ErrErrorsLimitExceeded
-			break
-		}
-
-		if atomic.LoadInt64(&tasksCounter) >= int64(len(tasks)) {
 			break
 		}
 	}
@@ -48,7 +43,7 @@ func Run(tasks []Task, n, m int) error {
 	return err
 }
 
-func worker(tasksCh chan Task, done chan struct{}, tCounter, errCounter *int64) {
+func worker(tasksCh chan Task, done chan struct{}, errCounter *int64) {
 	for {
 		select {
 		case task := <-tasksCh:
@@ -56,7 +51,6 @@ func worker(tasksCh chan Task, done chan struct{}, tCounter, errCounter *int64) 
 				atomic.AddInt64(errCounter, 1)
 			}
 
-			atomic.AddInt64(tCounter, 1)
 		case <-done:
 			return
 		}
