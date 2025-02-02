@@ -4,20 +4,20 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/require" //nolint:all
 )
 
 const (
 	fromPath = "testdata/input.txt"
-	toPath = "testdata/test.txt"
+	toPath   = "testdata/test.txt"
 )
 
 func TestCopy(t *testing.T) {
 	testCases := []struct {
-		limit int64
+		limit  int64
 		offset int64
-		path string
-		name string
+		path   string
+		name   string
 	}{
 		{limit: 0, offset: 0, path: "testdata/out_offset0_limit0.txt", name: "out_offset0_limit0"},
 		{limit: 10, offset: 0, path: "testdata/out_offset0_limit10.txt", name: "out_offset0_limit10"},
@@ -30,7 +30,6 @@ func TestCopy(t *testing.T) {
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
 			err := Copy(fromPath, toPath, tt.offset, tt.limit)
-
 			if err != nil {
 				t.Error(err.Error())
 			}
@@ -51,12 +50,12 @@ func TestCopy(t *testing.T) {
 }
 
 func TestCopyError(t *testing.T) {
-	var limit int64 = 0
+	var limit int64
 	var offset int64 = 7000
 
 	t.Run("Check offset exceeds error", func(t *testing.T) {
-			err := Copy(fromPath, toPath, offset, limit)
+		err := Copy(fromPath, toPath, offset, limit)
 
-			require.ErrorIs(t, ErrOffsetExceedsFileSize, err)
-		})
+		require.ErrorIs(t, ErrOffsetExceedsFileSize, err)
+	})
 }

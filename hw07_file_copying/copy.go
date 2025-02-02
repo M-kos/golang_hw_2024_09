@@ -6,30 +6,17 @@ import (
 	"io"
 	"os"
 
-	"github.com/cheggaaa/pb/v3"
+	"github.com/cheggaaa/pb/v3" //nolint:all
 )
 
 var (
 	ErrUnsupportedFile       = errors.New("unsupported file")
 	ErrOffsetExceedsFileSize = errors.New("offset exceeds file size")
-	ErrFileNOtExist = errors.New("file not exist")
+	ErrFileNOtExist          = errors.New("file not exist")
 )
 
 func Copy(fromPath, toPath string, offset, limit int64) error {
 	inFile, err := os.Open(fromPath)
-
-	defer inFile.Close()
-
-	stat, err := inFile.Stat()
-
-	if err != nil {
-		return err
-	}
-
-	if stat.Size() < offset {
-		return ErrOffsetExceedsFileSize
-	}
-
 	if err != nil {
 		if os.IsNotExist(err) {
 			return ErrFileNOtExist
@@ -38,8 +25,18 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 		return ErrUnsupportedFile
 	}
 
-	_, err = inFile.Seek(offset, io.SeekStart) 
+	defer inFile.Close()
 
+	stat, err := inFile.Stat()
+	if err != nil {
+		return err
+	}
+
+	if stat.Size() < offset {
+		return ErrOffsetExceedsFileSize
+	}
+
+	_, err = inFile.Seek(offset, io.SeekStart)
 	if err != nil {
 		return err
 	}
@@ -50,14 +47,16 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 
 	fmt.Println("Limit: ", limit)
 
-	err = writeToFile(inFile, toPath, offset, limit)
+	err = writeToFile(inFile, toPath, limit)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
 
-func writeToFile(inFile io.Reader, toPath string, offset, limit int64) error {
+func writeToFile(inFile io.Reader, toPath string, limit int64) error {
 	outFile, err := os.Create(toPath)
-
 	if err != nil {
 		return err
 	}
@@ -69,10 +68,6 @@ func writeToFile(inFile io.Reader, toPath string, offset, limit int64) error {
 	bar.Finish()
 
 	if err != nil {
-		if err == io.EOF {
-			return nil
-		}
-
 		return err
 	}
 
