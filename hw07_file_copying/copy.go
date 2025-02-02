@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"os"
 
@@ -45,8 +44,6 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 		limit = stat.Size()
 	}
 
-	fmt.Println("Limit: ", limit)
-
 	err = writeToFile(inFile, toPath, limit)
 	if err != nil {
 		return err
@@ -68,6 +65,9 @@ func writeToFile(inFile io.Reader, toPath string, limit int64) error {
 	bar.Finish()
 
 	if err != nil {
+		if errors.Is(err, io.EOF) {
+			return nil
+		}
 		return err
 	}
 

@@ -56,6 +56,6 @@ func TestCopyError(t *testing.T) {
 	t.Run("Check offset exceeds error", func(t *testing.T) {
 		err := Copy(fromPath, toPath, offset, limit)
 
-		require.ErrorIs(t, ErrOffsetExceedsFileSize, err)
+		require.ErrorIs(t, err, ErrOffsetExceedsFileSize)
 	})
 }
