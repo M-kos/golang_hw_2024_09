@@ -1,4 +1,4 @@
-module github.com/fixme_my_friend/hw07_file_copying
+module github.com/M-kos/golang_hw_2024_09/tree/master/hw07_file_copying
 
 go 1.22
 
