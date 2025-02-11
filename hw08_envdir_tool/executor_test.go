@@ -15,7 +15,7 @@ func TestRunCmd(t *testing.T) {
 	t.Run("successful test", func(t *testing.T) {
 		expectedEnv := Environment{
 			"BAR":   EnvValue{Value: "bar", NeedRemove: false},
-			"EMPTY": EnvValue{Value: " ", NeedRemove: false},
+			"EMPTY": EnvValue{Value: "", NeedRemove: true},
 			"FOO":   EnvValue{Value: "   foo\nwith new line", NeedRemove: false},
 			"HELLO": EnvValue{Value: "\"hello\"", NeedRemove: false},
 			"UNSET": EnvValue{Value: "", NeedRemove: true},

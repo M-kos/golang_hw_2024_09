@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"errors"
 	"io"
 	"os"
@@ -73,9 +74,8 @@ func ReadDir(dir string) (Environment, error) {
 }
 
 func clearString(line []byte) string {
-	s := string(line)
-	s = strings.TrimRight(s, "\t\n")
-	s = strings.ReplaceAll(s, "\x00", "\n")
+	s := bytes.TrimRight(line, " \t\n")
+	s = bytes.ReplaceAll(s, []byte("\x00"), []byte("\n"))
 
-	return s
+	return string(s)
 }
