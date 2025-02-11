@@ -30,6 +30,6 @@ func TestReadDir(t *testing.T) {
 
 		code := RunCmd(cmd, Environment{})
 
-		require.Equal(t, 1, code)
+		require.Equal(t, 2, code)
 	})
 }
