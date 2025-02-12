@@ -15,20 +15,19 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 	exCmd.Stdout = os.Stdout
 	exCmd.Stderr = os.Stderr
 
+	exCmd.Env = os.Environ()
+
 	for k, v := range env {
+		var value string
+		
 		if v.NeedRemove {
-			err := os.Unsetenv(k)
-			if err != nil {
-				log.Println(err.Error())
-				return 1
-			}
-
-			continue
+			value = ""
+		} else {
+			value = v.Value
 		}
-		exCmd.Env = append(exCmd.Env, k+"="+v.Value)
-	}
 
-	exCmd.Env = append(exCmd.Env, os.Environ()...)
+		exCmd.Env = append(exCmd.Env, k+"="+value)
+	}
 
 	if err := exCmd.Run(); err != nil {
 		log.Println(err.Error())
