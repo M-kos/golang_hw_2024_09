@@ -19,7 +19,7 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 
 	for k, v := range env {
 		var value string
-		
+
 		if v.NeedRemove {
 			value = ""
 		} else {
