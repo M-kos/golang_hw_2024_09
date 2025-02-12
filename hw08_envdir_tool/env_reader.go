@@ -39,9 +39,8 @@ func ReadDir(dir string) (Environment, error) {
 		if strings.Contains(file.Name(), "=") {
 			continue
 		}
-		
-		ev, err := fileHandler(filepath.Join(dir, file.Name()))
 
+		ev, err := fileHandler(filepath.Join(dir, file.Name()))
 		if err != nil {
 			return nil, err
 		}
@@ -62,15 +61,18 @@ func clearString(line []byte) string {
 	return string(s)
 }
 
-
 func fileHandler(path string) (*EnvValue, error) {
 	f, err := os.Open(path)
-
 	if err != nil {
 		return nil, err
 	}
 
-	if s, err := f.Stat(); err != nil || s.Size() == 0 {
+	s, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+
+	if s.Size() == 0 {
 		return &EnvValue{
 			NeedRemove: true,
 		}, nil
