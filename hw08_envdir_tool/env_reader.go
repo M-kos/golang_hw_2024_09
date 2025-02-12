@@ -39,34 +39,16 @@ func ReadDir(dir string) (Environment, error) {
 		if strings.Contains(file.Name(), "=") {
 			continue
 		}
+		
+		ev, err := fileHandler(filepath.Join(dir, file.Name()))
 
-		f, err := os.Open(filepath.Join(dir, file.Name()))
 		if err != nil {
 			return nil, err
 		}
 
-		openedFiles = append(openedFiles, f)
-
-		if s, err := f.Stat(); err != nil || s.Size() == 0 {
-			envMap[file.Name()] = EnvValue{
-				NeedRemove: true,
-			}
-
-			continue
-		}
-
-		r := bufio.NewReader(f)
-		l, _, err := r.ReadLine()
-
-		if err != nil && !errors.Is(err, io.EOF) {
-			return nil, err
-		}
-
-		value := clearString(l)
-
 		envMap[file.Name()] = EnvValue{
-			Value:      value,
-			NeedRemove: value == "",
+			Value:      ev.Value,
+			NeedRemove: ev.NeedRemove,
 		}
 	}
 
@@ -78,4 +60,33 @@ func clearString(line []byte) string {
 	s = bytes.ReplaceAll(s, []byte("\x00"), []byte("\n"))
 
 	return string(s)
+}
+
+
+func fileHandler(path string) (*EnvValue, error) {
+	f, err := os.Open(path)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if s, err := f.Stat(); err != nil || s.Size() == 0 {
+		return &EnvValue{
+			NeedRemove: true,
+		}, nil
+	}
+
+	r := bufio.NewReader(f)
+	l, _, err := r.ReadLine()
+
+	if err != nil && !errors.Is(err, io.EOF) {
+		return nil, err
+	}
+
+	value := clearString(l)
+
+	return &EnvValue{
+		Value:      value,
+		NeedRemove: value == "",
+	}, nil
 }
