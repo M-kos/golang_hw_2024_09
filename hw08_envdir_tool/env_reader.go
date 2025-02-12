@@ -27,13 +27,6 @@ func ReadDir(dir string) (Environment, error) {
 	}
 
 	envMap := make(Environment, len(files))
-	openedFiles := make([]*os.File, 0)
-
-	defer func() {
-		for _, f := range openedFiles {
-			f.Close()
-		}
-	}()
 
 	for _, file := range files {
 		if strings.Contains(file.Name(), "=") {
@@ -66,6 +59,8 @@ func fileHandler(path string) (*EnvValue, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	defer f.Close()
 
 	s, err := f.Stat()
 	if err != nil {
