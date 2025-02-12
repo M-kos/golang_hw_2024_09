@@ -1,4 +1,4 @@
-module github.com/fixme_my_friend/hw08_envdir_tool
+module github.com/M-kos/golang_hw_2024_09/tree/master/hw08_envdir_tool
 
 go 1.22
 
