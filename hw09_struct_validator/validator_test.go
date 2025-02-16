@@ -70,7 +70,7 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			in: User{
-				ID:     "123",
+				ID:     "1234",
 				Age:    5,
 				Email:  "qwe",
 				Role:   "stuff",
